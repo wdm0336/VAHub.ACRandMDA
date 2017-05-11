@@ -28,7 +28,7 @@
 myPlot <- function(data){
   
   ndays = 8
-  MaxPlotsAcross = 4
+  MaxPlotsAcross = 2
 
   # plot.graph takes in the data associated with one compound and creates the
   # plots. These graphs are created without the frequency rectangle. They are
@@ -81,7 +81,7 @@ myPlot <- function(data){
     
     text(x = grconvertX((col / numcol) + (.5/numcol), from='ndc'),
          y = grconvertY((row / numrow) + (.9/numrow), from='ndc'),
-         "Title")
+         "Title", cex = 1.5)
   }
 }
 
