@@ -27,7 +27,7 @@
 
 myPlot <- function(data){
   
-  ndays = 3
+  ndays = 8
   MaxPlotsAcross = 4
 
   # plot.graph takes in the data associated with one compound and creates the
@@ -68,8 +68,8 @@ myPlot <- function(data){
          ylab = "")
     axis(2)
     par(mar = c(1, 1, 1, 1))
-    plot.graph(df = data[data$trt == 0 & data$day == d,])
-    plot.graph(df = data[data$trt == 1 & data$day == d,])
+    plot.graph(df = data[data$trt == 0,])
+    plot.graph(df = data[data$trt == 1,])
   }
   
   for (d in 0:(ndays - 1)) {
