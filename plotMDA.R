@@ -30,12 +30,16 @@ myPlot <- function(data){
   ndays = 8
   MaxPlotsAcross = 2
 
+  library(beanplot)
+  library(grid)
+  library(gridBase)
+  
+  
   # plot.graph takes in the data associated with one compound and creates the
   # plots. These graphs are created without the frequency rectangle. They are
   # added later.
   plot.graph <- function(df) {
    
-    library(beanplot)
 
     beanplot(df$comp1 ~ df$mda, side="both",
              what = c(0,1,0,0),
@@ -44,6 +48,7 @@ myPlot <- function(data){
              axes = FALSE,
              frame.plot = FALSE,
              show.names = FALSE,
+             xlab = "TRT",
              log = '')
 
   }
@@ -72,17 +77,17 @@ myPlot <- function(data){
     plot.graph(df = data[data$trt == 1,])
   }
   
-  for (d in 0:(ndays - 1)) {
-    row = numrow - (d %/% numcol) - 1
-    col = d %% numcol
-    
-    rect(grconvertX(col / numcol, from='ndc'), grconvertY(row / numrow, from='ndc'),
-         grconvertX((col+1) / numcol, from='ndc'), grconvertY((row+1) / numrow, from='ndc'))
-    
-    text(x = grconvertX((col / numcol) + (.5/numcol), from='ndc'),
-         y = grconvertY((row / numrow) + (.9/numrow), from='ndc'),
-         "Title", cex = 1.5)
-  }
+  # for (d in 0:(ndays - 1)) {
+  #   row = numrow - (d %/% numcol) - 1
+  #   col = d %% numcol
+  #   
+  #   rect(grconvertX(col / numcol, from='ndc'), grconvertY(row / numrow, from='ndc'),
+  #        grconvertX((col+1) / numcol, from='ndc'), grconvertY((row+1) / numrow, from='ndc'))
+  #   
+  #   text(x = grconvertX((col / numcol) + (.5/numcol), from='ndc'),
+  #        y = grconvertY((row / numrow) + (.9/numrow), from='ndc'),
+  #        "Title", cex = 1.5)
+  # }
 }
 
 
