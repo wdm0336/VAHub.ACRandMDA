@@ -25,9 +25,27 @@
 #       Anastasia Alexeeva   (Validator)
 # --------------------------------------------------------------------------------------------------------------------------------
 
-data_file = "datafiles/testdata.csv"
+library(stringr)
 
-df <- read.csv(data_file)
+data_file = "datafiles/mda2.csv"
+
+df <- read.csv(data_file, stringsAsFactors = FALSE)
+
+df$weeknum = as.integer(str_extract(df$week, "[0-9]+"))
+
+ymaxs = data.frame(
+  GADVASR5 = max(df$GADVASR5, na.rm = TRUE),
+  HAQTS = max(df$HAQTS, na.rm = TRUE),
+  LEITS = max(df$LEITS, na.rm = TRUE),
+  PASIPBPS = max(df$PASIPBPS, na.rm = TRUE),
+  PASITS = max(df$PASITS, na.rm = TRUE),
+  PVLS16 = max(df$PVLS16, na.rm = TRUE),
+  SJC66 = max(df$SJC66, na.rm = TRUE),
+  TJC68 = max(df$TJC68, na.rm = TRUE)
+)
+print(ymaxs)
+
+
 
 # When this file is sourced, a function called testPlot() is created that can be
 # called from the console. This function will source and call the plot function
@@ -38,19 +56,19 @@ df <- read.csv(data_file)
 testPlot <- function(timenum = -1) {
   require(grid)
   
-  source("plotMDA.R")
+  source("plotMDA_mix_grid_base.R")
   
   if (timenum == -1) {
-    timenum = sample(df$day, size = 1)
+    timenum = sample(df$weeknum, size = 1)
   }
 
-  if (!(timenum %in% df$day)) {
+  if (!(timenum %in% df$weeknum)) {
     print(paste0("Given time number (", timenum,
                 ") not in data. Available times are :"))
-    print(paste(unique(df$day)))
+    print(paste(unique(df$weeknum)))
     stop("Invalid time number")
   }
   grid.newpage()
-  myPlot(data = df)
+  myPlot(dat = df[df$weeknum == timenum,])
 }
 
