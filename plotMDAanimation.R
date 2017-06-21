@@ -74,7 +74,9 @@ for (comp in alias$ADaM) {
           n = smooth.npoint
         )
         
-        smooth.array[t, "nonMDA", , paste0("V", visitID[v]), comp] = temp.density_obsPair0$y * length(temp.component_obsPair$"0")
+        smooth.array[t, "nonMDA", , v, comp] = temp.density_obsPair0$y * length(temp.component_obsPair$"0")
+      } else {
+        smooth.array[t, "nonMDA", , v, comp] = 0
       }
       if (length(temp.component_obsPair$"1") > 5) {
         temp.density_obsPair1 = density(
@@ -84,8 +86,11 @@ for (comp in alias$ADaM) {
           to = minmax[2, comp],
           n = smooth.npoint
         )
-        smooth.array[t, "MDA", , paste0("V", visitID[v]), comp] = temp.density_obsPair1$y * length(temp.component_obsPair$"1")
+        smooth.array[t, "MDA", , v, comp] = temp.density_obsPair1$y * length(temp.component_obsPair$"1")
+      } else {
+        smooth.array[t, "MDA", , v, comp] = 0
       }
+    
     }
   }
 }
@@ -95,103 +100,103 @@ for (comp in alias$ADaM) {
 DayID = 0:(24 * 7)
 WeekID = c(0, 1, 2, 4, 8, 12, 16, 20, 24)
 
-for (comp in alias$ADaM) {
-  cat(paste0("Working on component <", comp, ">.\n"))
-  pdf(sprintf("reports/component_reports/density%s.pdf", comp),
-      height = 8,
-      width = 20)
-
-  pushViewport(vp = viewport(layout = grid.layout(
-    nrow = 3,
-    ncol = 2,
-    widths = unit(c(1, 1), c("lines", "null")),
-    heights = unit(c(1, 1, 1), c("lines", "null", "lines"))
-  )))
-
-  ### Print the title
-
-  grid.text(paste("Component:", comp),
-            vp = viewport(layout.pos.col = 1:2,
-                          layout.pos.row = 1))
-
-  ### print the treatments to the left in the first column
-
-  pushViewport(vp = viewport(layout.pos.col = 1, layout.pos.row = 2))
-  pushViewport(vp = viewport(layout = grid.layout(nrow = length(TrtID), ncol = 1)))
-
-  for (t in 1:length(TrtID)) {
-    grid.text(TrtID[t],
-              vp = viewport(layout.pos.col = 1,
-                            layout.pos.row = t),
-              rot = 90)
-  }
-  popViewport(2)
-
-  ### print the Period numbers at the bottom of the last row
-
-  pushViewport(vp = viewport(layout.pos.col = 2, layout.pos.row = 3))
-  pushViewport(vp = viewport(layout = grid.layout(ncol = length(visitID), nrow = 1)))
-
-  for (v in 1:length(visitID)) {
-    grid.text(paste("Week", WeekID[v]),
-              vp = viewport(layout.pos.col = v,
-                            layout.pos.row = 1))
-  }
-
-  popViewport(2)
-
-
-  ### Print the plots in the main plot area.
-
-  pushViewport(vp = viewport(layout.pos.col = 2, layout.pos.row = 2))
-  pushViewport(vp = viewport(layout = grid.layout(nrow = length(TrtID), ncol = length(visitID))))
-
-  ymax = max(smooth.array[, "Overall", , , comp], na.rm = TRUE)
-
-  for (v in  1:length(visitID)) {
-    if ((v == 2) & (comp == "LEITS")) {
-      next
-    }
-
-    for (t in 1:length(TrtID)) {
-
-      dat <-
-        data.frame(
-          x = seq(minmax[1, comp], minmax[2, comp], l = smooth.npoint),
-          nonMDA = smooth.array[t, "nonMDA", , paste0("V", visitID[v]), comp] * -1,
-          MDA    = smooth.array[t, "MDA", , paste0("V", visitID[v]), comp]
-        )
-
-      gg <- ggplot(data = dat, aes(x = x))
-      gg <-
-        gg + geom_area(
-          aes(y = nonMDA),
-          color = "black",
-          fill = "blue",
-          alpha = .5
-        )
-      gg <-
-        gg + geom_area(aes(y = MDA),
-                       color = "black",
-                       fill = "orange",
-                       alpha = .5)
-      gg <- gg + ylim(-ymax, ymax)
-      gg <- gg + coord_flip()
-      gg <- gg + theme(
-        axis.title = element_blank(),
-        panel.grid = element_blank(),
-        panel.background = element_blank()
-      )
-
-      print(gg, vp = viewport(layout.pos.col = v,
-                              layout.pos.row = t))
-
-    }
-  }
-  popViewport(3)
-
-  dev.off()
-}
+# for (comp in alias$ADaM) {
+#   cat(paste0("Working on component <", comp, ">.\n"))
+#   pdf(sprintf("reports/component_reports/density%s.pdf", comp),
+#       height = 8,
+#       width = 20)
+# 
+#   pushViewport(vp = viewport(layout = grid.layout(
+#     nrow = 3,
+#     ncol = 2,
+#     widths = unit(c(1, 1), c("lines", "null")),
+#     heights = unit(c(1, 1, 1), c("lines", "null", "lines"))
+#   )))
+# 
+#   ### Print the title
+# 
+#   grid.text(paste("Component:", comp),
+#             vp = viewport(layout.pos.col = 1:2,
+#                           layout.pos.row = 1))
+# 
+#   ### print the treatments to the left in the first column
+# 
+#   pushViewport(vp = viewport(layout.pos.col = 1, layout.pos.row = 2))
+#   pushViewport(vp = viewport(layout = grid.layout(nrow = length(TrtID), ncol = 1)))
+# 
+#   for (t in 1:length(TrtID)) {
+#     grid.text(TrtID[t],
+#               vp = viewport(layout.pos.col = 1,
+#                             layout.pos.row = t),
+#               rot = 90)
+#   }
+#   popViewport(2)
+# 
+#   ### print the Period numbers at the bottom of the last row
+# 
+#   pushViewport(vp = viewport(layout.pos.col = 2, layout.pos.row = 3))
+#   pushViewport(vp = viewport(layout = grid.layout(ncol = length(visitID), nrow = 1)))
+# 
+#   for (v in 1:length(visitID)) {
+#     grid.text(paste("Week", WeekID[v]),
+#               vp = viewport(layout.pos.col = v,
+#                             layout.pos.row = 1))
+#   }
+# 
+#   popViewport(2)
+# 
+# 
+#   ### Print the plots in the main plot area.
+# 
+#   pushViewport(vp = viewport(layout.pos.col = 2, layout.pos.row = 2))
+#   pushViewport(vp = viewport(layout = grid.layout(nrow = length(TrtID), ncol = length(visitID))))
+# 
+#   ymax = max(smooth.array[, "Overall", , , comp], na.rm = TRUE)
+# 
+#   for (v in  1:length(visitID)) {
+#     if ((v == 2) & (comp == "LEITS")) {
+#       next
+#     }
+# 
+#     for (t in 1:length(TrtID)) {
+# 
+#       dat <-
+#         data.frame(
+#           x = seq(minmax[1, comp], minmax[2, comp], l = smooth.npoint),
+#           nonMDA = smooth.array[t, "nonMDA", , paste0("V", visitID[v]), comp] * -1,
+#           MDA    = smooth.array[t, "MDA", , paste0("V", visitID[v]), comp]
+#         )
+# 
+#       gg <- ggplot(data = dat, aes(x = x))
+#       gg <-
+#         gg + geom_area(
+#           aes(y = nonMDA),
+#           color = "black",
+#           fill = "blue",
+#           alpha = .5
+#         )
+#       gg <-
+#         gg + geom_area(aes(y = MDA),
+#                        color = "black",
+#                        fill = "orange",
+#                        alpha = .5)
+#       gg <- gg + ylim(-ymax, ymax)
+#       gg <- gg + coord_flip()
+#       gg <- gg + theme(
+#         axis.title = element_blank(),
+#         panel.grid = element_blank(),
+#         panel.background = element_blank()
+#       )
+# 
+#       print(gg, vp = viewport(layout.pos.col = v,
+#                               layout.pos.row = t))
+# 
+#     }
+#   }
+#   popViewport(3)
+# 
+#   dev.off()
+# }
 
 #======== Animation =========#
 #--- create pseudo dataset ---#
@@ -209,28 +214,29 @@ Pseudo.smooth.array = array(0,
                                             alias$ADaM)
                             )
 
+
 for (comp in alias$ADaM) {
+  
+  if (comp == "LEITS") {
+    avail_weeks = c(0, 2, 4, 8, 12, 16, 20, 24)
+  } else {
+    avail_weeks = c(0, 1, 2, 4, 8, 12, 16, 20, 24)
+  }
+  
   for (d in 1:length(DayID)) {
     
-    # There is no LEITS data for day 2 even though the others have it.
-    if ((comp == "LEITS") & (d == 2)) {
-      WeekID = c(0, 1, 4, 8, 12, 16, 20, 24)
-    } else {
-      WeekID = c(0, 1, 2, 4, 8, 12, 16, 20, 24)
-    }
-    
     # pseudo Day match scheduled Visit Day
-    if (DayID[d] %in% (WeekID * 7))  {
+    if (DayID[d] %in% (avail_weeks * 7))  {
       Pseudo.smooth.array[, , , d, comp] = smooth.array[, , , which(WeekID %in% (DayID[d] / 7)), comp]
     }
     
     # pseudo Day value is a weighted avg between 2 scheduled visit
     else {
-      ul_bounds = (WeekID * 7)[(which.max(DayID[d] < (WeekID * 7)) - 1):which.max(DayID[d] < (WeekID * 7))]
-      length    = diff(ul_bounds)
-      Pseudo.smooth.array[, , , paste0("Day", DayID[d]), comp] =
-        (abs(DayID[d] - ul_bounds[2]) / length) * smooth.array[, , , paste0("V", which.max(DayID[d] < (WeekID * 7))), comp] +
-        (abs(DayID[d] - ul_bounds[1]) / length) * smooth.array[, , , paste0("V", which.max(DayID[d] < (WeekID * 7)) + 1), comp]
+      ul_bounds = (avail_weeks * 7)[(which.max(DayID[d] < (avail_weeks * 7)) - 1):which.max(DayID[d] < (avail_weeks * 7))]
+      day_diff  = diff(ul_bounds)
+      Pseudo.smooth.array[, , , d, comp] =
+        (abs(DayID[d] - ul_bounds[2]) / day_diff) * smooth.array[, , , which((ul_bounds[1] / 7) == WeekID), comp] +
+        (abs(DayID[d] - ul_bounds[1]) / day_diff) * smooth.array[, , , which((ul_bounds[2] / 7) == WeekID), comp]
     }
     
   }
@@ -252,10 +258,6 @@ for (d in 1:length(DayID)) {
     quality = 100
   )
 
-  plotComponentByTrt <- function(Pseudo.smooth.array, component, treatments) {
-
-  }
-  
   pushViewport(vp = viewport(layout = grid.layout(
     nrow = 2,
     ncol = 1,
@@ -333,7 +335,7 @@ for (d in 1:length(DayID)) {
                 layout.pos.row = 2
               ))
               
-              grid.text(alias$ADaM[trt],
+              grid.text(TrtID[trt],
                         vp = viewport(
                           layout.pos.col = trt,
                           layout.pos.row = 3
